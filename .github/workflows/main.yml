@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    name: Build Android APK
+    name: Build Talkaif Go APK
     runs-on: ubuntu-latest
 
     steps:
@@ -20,37 +20,1352 @@ jobs:
         uses: actions/setup-java@v5
         with:
           distribution: temurin
-          java-version: '21'
+          java-version: "21"
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
-          node-version: '22'
+          node-version: "22"
 
       - name: Check Java
         run: |
           java -version
           javac -version
 
-      - name: Check project files
+      - name: Create package.json
         run: |
-          echo "Current directory:"
-          pwd
-          echo "Project files:"
-          ls -la
-          echo "Android directory:"
-          ls -la android || true
+          cat > package.json <<'PACKAGE_EOF'
+          {
+            "name": "talkaif-go",
+            "version": "1.0.0",
+            "private": true,
+            "description": "Talkaif Go delivery app",
+            "scripts": {
+              "build": "mkdir -p www && cp index.html www/index.html"
+            },
+            "dependencies": {
+              "@capacitor/core": "^7.4.0"
+            },
+            "devDependencies": {
+              "@capacitor/cli": "^7.4.0",
+              "@capacitor/android": "^7.4.0"
+            }
+          }
+          PACKAGE_EOF
+
+      - name: Create capacitor.config.json
+        run: |
+          cat > capacitor.config.json <<'CAPACITOR_EOF'
+          {
+            "appId": "com.talkaif.go",
+            "appName": "Talkaif Go",
+            "webDir": "www",
+            "server": {
+              "androidScheme": "https"
+            }
+          }
+          CAPACITOR_EOF
+
+      - name: Create index.html
+        run: |
+          cat > index.html <<'HTML_EOF'
+          <!DOCTYPE html>
+          <html lang="ar" dir="rtl">
+
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+              <title>Talkaif Go</title>
+
+              <style>
+                  * {
+                      box-sizing: border-box;
+                      margin: 0;
+                      padding: 0;
+                  }
+
+                  body {
+                      font-family: Arial, sans-serif;
+                      background: #f5f5f5;
+                      color: #222;
+                      padding-bottom: 90px;
+                  }
+
+                  button,
+                  input,
+                  textarea {
+                      font-family: inherit;
+                  }
+
+                  button {
+                      cursor: pointer;
+                  }
+
+                  .header {
+                      background: #ffcc00;
+                      padding: 24px 18px;
+                      border-radius: 0 0 25px 25px;
+                  }
+
+                  .logo {
+                      font-size: 30px;
+                      font-weight: bold;
+                      margin-bottom: 8px;
+                  }
+
+                  .subtitle {
+                      font-size: 15px;
+                      margin-bottom: 18px;
+                  }
+
+                  .search {
+                      width: 100%;
+                      padding: 15px 18px;
+                      border: none;
+                      border-radius: 14px;
+                      font-size: 16px;
+                      outline: none;
+                  }
+
+                  .container {
+                      padding: 22px 16px;
+                  }
+
+                  .section-title {
+                      font-size: 22px;
+                      margin-bottom: 14px;
+                  }
+
+                  .shop,
+                  .food-item,
+                  .cart-item,
+                  .form-box,
+                  .total-box {
+                      background: white;
+                      border-radius: 18px;
+                      box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+                  }
+
+                  .shop {
+                      padding: 15px;
+                      margin-bottom: 15px;
+                  }
+
+                  .shop-image {
+                      width: 100%;
+                      height: 160px;
+                      object-fit: cover;
+                      border-radius: 14px;
+                      margin-bottom: 12px;
+                  }
+
+                  .shop-name {
+                      font-size: 20px;
+                      font-weight: bold;
+                      margin-bottom: 6px;
+                  }
+
+                  .shop-info {
+                      color: #777;
+                      font-size: 14px;
+                      margin-bottom: 12px;
+                  }
+
+                  .open-button,
+                  .checkout-button,
+                  .confirm-button {
+                      width: 100%;
+                      border: none;
+                      background: #222;
+                      color: white;
+                      padding: 14px;
+                      border-radius: 12px;
+                      font-size: 16px;
+                  }
+
+                  #restaurantPage,
+                  #cartPage,
+                  #checkoutPage,
+                  #successPage {
+                      display: none;
+                  }
+
+                  .back-button {
+                      border: none;
+                      background: white;
+                      padding: 10px 16px;
+                      border-radius: 12px;
+                      font-size: 16px;
+                      margin-bottom: 15px;
+                  }
+
+                  .restaurant-cover {
+                      width: 100%;
+                      height: 190px;
+                      object-fit: cover;
+                      border-radius: 18px;
+                      margin-bottom: 15px;
+                  }
+
+                  .restaurant-title {
+                      font-size: 26px;
+                      font-weight: bold;
+                      margin-bottom: 5px;
+                  }
+
+                  .restaurant-description {
+                      color: #777;
+                      margin-bottom: 25px;
+                  }
+
+                  .food-item {
+                      padding: 14px;
+                      margin-bottom: 12px;
+                      display: flex;
+                      align-items: center;
+                      gap: 12px;
+                  }
+
+                  .food-image {
+                      width: 85px;
+                      height: 85px;
+                      object-fit: cover;
+                      border-radius: 12px;
+                      flex-shrink: 0;
+                  }
+
+                  .food-info {
+                      flex: 1;
+                  }
+
+                  .food-name {
+                      font-size: 17px;
+                      font-weight: bold;
+                      margin-bottom: 6px;
+                  }
+
+                  .food-description {
+                      font-size: 13px;
+                      color: #888;
+                      margin-bottom: 7px;
+                  }
+
+                  .food-price {
+                      font-weight: bold;
+                      font-size: 16px;
+                  }
+
+                  .add-button {
+                      background: #ffcc00;
+                      border: none;
+                      width: 40px;
+                      height: 40px;
+                      border-radius: 50%;
+                      font-size: 23px;
+                      font-weight: bold;
+                  }
+
+                  .bottom-cart {
+                      position: fixed;
+                      bottom: 15px;
+                      left: 15px;
+                      right: 15px;
+                      background: #222;
+                      color: white;
+                      padding: 15px;
+                      border-radius: 15px;
+                      display: none;
+                      justify-content: space-between;
+                      align-items: center;
+                      z-index: 10;
+                  }
+
+                  .cart-button {
+                      background: #ffcc00;
+                      color: #222;
+                      border: none;
+                      padding: 10px 16px;
+                      border-radius: 10px;
+                      font-weight: bold;
+                  }
+
+                  .cart-item {
+                      padding: 15px;
+                      margin-bottom: 12px;
+                      display: flex;
+                      justify-content: space-between;
+                      align-items: center;
+                  }
+
+                  .cart-item-name {
+                      font-weight: bold;
+                      margin-bottom: 5px;
+                  }
+
+                  .cart-item-price {
+                      color: #777;
+                  }
+
+                  .remove-button {
+                      background: #eee;
+                      border: none;
+                      border-radius: 10px;
+                      padding: 8px 12px;
+                  }
+
+                  .total-box {
+                      padding: 18px;
+                      margin-top: 20px;
+                      font-size: 19px;
+                      font-weight: bold;
+                  }
+
+                  .checkout-button {
+                      background: #ffcc00;
+                      color: #222;
+                      margin-top: 15px;
+                      font-weight: bold;
+                  }
+
+                  .form-box {
+                      padding: 18px;
+                  }
+
+                  .form-label {
+                      display: block;
+                      font-weight: bold;
+                      margin-bottom: 7px;
+                      margin-top: 16px;
+                  }
+
+                  .form-input,
+                  .form-textarea {
+                      width: 100%;
+                      border: 1px solid #ddd;
+                      border-radius: 12px;
+                      padding: 14px;
+                      font-size: 16px;
+                      outline: none;
+                  }
+
+                  .form-textarea {
+                      height: 100px;
+                      resize: none;
+                  }
+
+                  .payment-box {
+                      background: #f7f7f7;
+                      border-radius: 12px;
+                      padding: 14px;
+                      margin-top: 8px;
+                  }
+
+                  .final-total {
+                      background: #222;
+                      color: white;
+                      padding: 18px;
+                      border-radius: 15px;
+                      margin-top: 18px;
+                      text-align: center;
+                      font-size: 19px;
+                      font-weight: bold;
+                  }
+
+                  .confirm-button {
+                      background: #ffcc00;
+                      color: #222;
+                      margin-top: 15px;
+                      font-weight: bold;
+                  }
+
+                  .success {
+                      text-align: center;
+                      padding-top: 60px;
+                  }
+
+                  .success-icon {
+                      font-size: 65px;
+                      margin-bottom: 20px;
+                  }
+
+                  .success h1 {
+                      font-size: 28px;
+                      margin-bottom: 12px;
+                  }
+
+                  .success p {
+                      color: #777;
+                      line-height: 1.7;
+                      margin-bottom: 25px;
+                  }
+
+                  .order-number {
+                      background: white;
+                      border-radius: 15px;
+                      padding: 18px;
+                      font-size: 20px;
+                      font-weight: bold;
+                      margin-bottom: 20px;
+                  }
+
+                  .home-button {
+                      background: #222;
+                      color: white;
+                      border: none;
+                      padding: 15px 25px;
+                      border-radius: 13px;
+                      font-size: 16px;
+                  }
+
+                  .loading {
+                      text-align: center;
+                      padding: 30px;
+                      color: #777;
+                  }
+
+                  .error {
+                      background: #ffe5e5;
+                      color: #b00000;
+                      padding: 15px;
+                      border-radius: 12px;
+                      margin-bottom: 15px;
+                  }
+              </style>
+          </head>
+
+          <body>
+
+          <div id="homePage">
+
+              <header class="header">
+
+                  <div class="logo">Talkaif Go</div>
+
+                  <div class="subtitle">
+                      اطلب من محلات تلكيف ويوصلك طلبك لباب البيت
+                  </div>
+
+                  <input
+                      id="searchInput"
+                      class="search"
+                      type="text"
+                      placeholder="ابحث عن محل أو منتج..."
+                  >
+
+              </header>
+
+              <main class="container">
+
+                  <h2 class="section-title">المحلات</h2>
+
+                  <div id="shopsContainer" class="loading">
+                      جاري تحميل المحلات...
+                  </div>
+
+              </main>
+
+          </div>
+
+          <div id="restaurantPage">
+
+              <main class="container">
+
+                  <button class="back-button" onclick="goHome()">
+                      ← رجوع
+                  </button>
+
+                  <img
+                      id="restaurantCover"
+                      class="restaurant-cover"
+                      src=""
+                      alt="المطعم"
+                  >
+
+                  <div id="restaurantTitle" class="restaurant-title"></div>
+
+                  <div id="restaurantDescription" class="restaurant-description"></div>
+
+                  <h2 class="section-title">
+                      قائمة الطعام
+                  </h2>
+
+                  <div id="productsContainer" class="loading">
+                      جاري تحميل المنتجات...
+                  </div>
+
+              </main>
+
+          </div>
+
+          <div id="cartPage">
+
+              <main class="container">
+
+                  <button class="back-button" onclick="goRestaurant()">
+                      ← الرجوع للقائمة
+                  </button>
+
+                  <h2 class="section-title">
+                      سلة الطلب
+                  </h2>
+
+                  <div id="cartItems"></div>
+
+                  <div class="total-box">
+
+                      المجموع:
+                      <span id="totalPrice">0</span>
+                      د.ع
+
+                      <button
+                          class="checkout-button"
+                          onclick="openCheckout()"
+                      >
+                          إتمام الطلب
+                      </button>
+
+                  </div>
+
+              </main>
+
+          </div>
+
+          <div id="checkoutPage">
+
+              <main class="container">
+
+                  <button class="back-button" onclick="openCart()">
+                      ← الرجوع للسلة
+                  </button>
+
+                  <h2 class="section-title">
+                      معلومات التوصيل
+                  </h2>
+
+                  <div class="form-box">
+
+                      <label class="form-label">الاسم</label>
+
+                      <input
+                          id="customerName"
+                          class="form-input"
+                          type="text"
+                          placeholder="اكتب اسمك"
+                      >
+
+                      <label class="form-label">رقم الهاتف</label>
+
+                      <input
+                          id="customerPhone"
+                          class="form-input"
+                          type="tel"
+                          placeholder="07xxxxxxxxx"
+                      >
+
+                      <label class="form-label">العنوان</label>
+
+                      <input
+                          id="customerAddress"
+                          class="form-input"
+                          type="text"
+                          placeholder="مثال: تلكيف، قرب..."
+                      >
+
+                      <label class="form-label">ملاحظات إضافية</label>
+
+                      <textarea
+                          id="customerNotes"
+                          class="form-textarea"
+                          placeholder="مثلاً: اتصل بي عند الوصول"
+                      ></textarea>
+
+                      <label class="form-label">طريقة الدفع</label>
+
+                      <div class="payment-box">
+                          الدفع نقدًا عند الاستلام
+                      </div>
+
+                      <div class="final-total">
+
+                          المجموع:
+                          <span id="checkoutTotal">0</span>
+                          د.ع
+
+                      </div>
+
+                      <button
+                          class="confirm-button"
+                          onclick="confirmOrder()"
+                      >
+                          تأكيد الطلب
+                      </button>
+
+                  </div>
+
+              </main>
+
+          </div>
+
+          <div id="successPage">
+
+              <main class="container">
+
+                  <div class="success">
+
+                      <div class="success-icon">
+                          ✓
+                      </div>
+
+                      <h1>
+                          تم استلام طلبك
+                      </h1>
+
+                      <p>
+                          شكرًا لاستخدامك Talkaif Go.<br>
+                          سنقوم بتجهيز طلبك وتوصيله إليك.
+                      </p>
+
+                      <div class="order-number">
+
+                          رقم الطلب:
+                          <span id="orderNumber"></span>
+
+                      </div>
+
+                      <button
+                          class="home-button"
+                          onclick="goHome()"
+                      >
+                          العودة للرئيسية
+                      </button>
+
+                  </div>
+
+              </main>
+
+          </div>
+
+          <div id="bottomCart" class="bottom-cart">
+
+              <div>
+                  السلة:
+                  <span id="cartCount">0</span>
+                  منتج
+              </div>
+
+              <button
+                  class="cart-button"
+                  onclick="openCart()"
+              >
+                  عرض السلة
+              </button>
+
+          </div>
+
+          <script type="module">
+
+              import {
+                  initializeApp
+              } from
+              "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
+              import {
+                  getFirestore,
+                  collection,
+                  getDocs,
+                  addDoc,
+                  serverTimestamp
+              } from
+              "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+              const firebaseConfig = {
+
+                  apiKey:
+                      "AIzaSyCEGkr6NYCWDtRQi91_ZJVDVcjO5J1-3sM",
+
+                  authDomain:
+                      "talkaif.firebaseapp.com",
+
+                  projectId:
+                      "talkaif",
+
+                  storageBucket:
+                      "talkaif.firebasestorage.app",
+
+                  messagingSenderId:
+                      "686912880272",
+
+                  appId:
+                      "1:686912880272:web:40054135e3e748880d6215",
+
+                  measurementId:
+                      "G-0PS9B27Y1V"
+              };
+
+              const app =
+                  initializeApp(firebaseConfig);
+
+              const db =
+                  getFirestore(app);
+
+              let cart = [];
+
+              let currentShop = null;
+
+              let currentProducts = [];
+
+              let orderNumber =
+                  Number(
+                      localStorage.getItem("talkaifOrderNumber") || 1001
+                  );
+
+              function hideAllPages() {
+
+                  document.getElementById("homePage").style.display = "none";
+
+                  document.getElementById("restaurantPage").style.display = "none";
+
+                  document.getElementById("cartPage").style.display = "none";
+
+                  document.getElementById("checkoutPage").style.display = "none";
+
+                  document.getElementById("successPage").style.display = "none";
+
+              }
+
+              function goHome() {
+
+                  hideAllPages();
+
+                  document.getElementById("homePage").style.display = "block";
+
+              }
+
+              window.goHome = goHome;
+
+              async function loadShops() {
+
+                  const container =
+                      document.getElementById("shopsContainer");
+
+                  try {
+
+                      const snapshot =
+                          await getDocs(
+                              collection(db, "shops")
+                          );
+
+                      container.innerHTML = "";
+
+                      if (snapshot.empty) {
+
+                          container.className = "loading";
+
+                          container.textContent =
+                              "لا توجد محلات حاليًا.";
+
+                          return;
+                      }
+
+                      snapshot.forEach(function(documentSnapshot) {
+
+                          const shop =
+                              documentSnapshot.data();
+
+                          const shopId =
+                              documentSnapshot.id;
+
+                          const shopElement =
+                              document.createElement("div");
+
+                          shopElement.className = "shop";
+
+                          const image =
+                              shop.image ||
+                              "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=900&q=80";
+
+                          const name =
+                              shop.name || "محل";
+
+                          const description =
+                              shop.description ||
+                              "توصيل داخل تلكيف";
+
+                          shopElement.innerHTML = `
+
+                              <img
+                                  class="shop-image"
+                                  src="${image}"
+                                  alt="المحل"
+                              >
+
+                              <div class="shop-name">
+                                  ${name}
+                              </div>
+
+                              <div class="shop-info">
+                                  ${description}
+                              </div>
+
+                              <button class="open-button">
+                                  عرض القائمة
+                              </button>
+                          `;
+
+                          shopElement
+                              .querySelector(".open-button")
+                              .addEventListener(
+                                  "click",
+                                  function() {
+
+                                      openRestaurant(
+                                          shopId,
+                                          shop
+                                      );
+
+                                  }
+                              );
+
+                          container.appendChild(shopElement);
+
+                      });
+
+                  } catch (error) {
+
+                      console.error(error);
+
+                      container.className = "error";
+
+                      container.textContent =
+                          "تعذر تحميل المحلات.";
+
+                  }
+
+              }
+
+              async function openRestaurant(shopId, shop) {
+
+                  currentShop = {
+                      id: shopId,
+                      ...shop
+                  };
+
+                  hideAllPages();
+
+                  document.getElementById("restaurantPage")
+                      .style.display = "block";
+
+                  document.getElementById("restaurantTitle")
+                      .textContent =
+                      shop.name || "محل";
+
+                  document.getElementById("restaurantDescription")
+                      .textContent =
+                      shop.description ||
+                      "توصيل داخل تلكيف";
+
+                  document.getElementById("restaurantCover")
+                      .src =
+                      shop.image ||
+                      "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=900&q=80";
+
+                  await loadProducts(shopId);
+
+              }
+
+              window.openRestaurant = openRestaurant;
+
+              async function loadProducts(shopId) {
+
+                  const container =
+                      document.getElementById("productsContainer");
+
+                  container.className = "loading";
+
+                  container.textContent =
+                      "جاري تحميل المنتجات...";
+
+                  try {
+
+                      const snapshot =
+                          await getDocs(
+                              collection(db, "products")
+                          );
+
+                      currentProducts = [];
+
+                      snapshot.forEach(function(documentSnapshot) {
+
+                          const product =
+                              documentSnapshot.data();
+
+                          if (product.shopId === shopId) {
+
+                              currentProducts.push({
+                                  id: documentSnapshot.id,
+                                  ...product
+                              });
+
+                          }
+
+                      });
+
+                      renderProducts();
+
+                  } catch (error) {
+
+                      console.error(error);
+
+                      container.className = "error";
+
+                      container.textContent =
+                          "تعذر تحميل المنتجات.";
+
+                  }
+
+              }
+
+              function renderProducts() {
+
+                  const container =
+                      document.getElementById("productsContainer");
+
+                  container.innerHTML = "";
+
+                  container.className = "";
+
+                  if (currentProducts.length === 0) {
+
+                      container.className = "loading";
+
+                      container.textContent =
+                          "لا توجد منتجات حاليًا.";
+
+                      return;
+
+                  }
+
+                  currentProducts.forEach(function(product) {
+
+                      const element =
+                          document.createElement("div");
+
+                      element.className = "food-item";
+
+                      const image =
+                          product.image ||
+                          "https://images.unsplash.com/photo-1568901346375-23c9450c58df?auto=format&fit=crop&w=300&q=80";
+
+                      const name =
+                          product.name || "منتج";
+
+                      const description =
+                          product.description || "";
+
+                      const price =
+                          Number(product.price || 0);
+
+                      element.innerHTML = `
+
+                          <img
+                              class="food-image"
+                              src="${image}"
+                              alt="${name}"
+                          >
+
+                          <div class="food-info">
+
+                              <div class="food-name">
+                                  ${name}
+                              </div>
+
+                              <div class="food-description">
+                                  ${description}
+                              </div>
+
+                              <div class="food-price">
+                                  ${price.toLocaleString()}
+                                  د.ع
+                              </div>
+
+                          </div>
+
+                          <button class="add-button">
+                              +
+                          </button>
+
+                      `;
+
+                      element
+                          .querySelector(".add-button")
+                          .addEventListener(
+                              "click",
+                              function() {
+
+                                  addToCart(
+                                      name,
+                                      price
+                                  );
+
+                              }
+                          );
+
+                      container.appendChild(element);
+
+                  });
+
+              }
+
+              function addToCart(name, price) {
+
+                  cart.push({
+                      name: name,
+                      price: price
+                  });
+
+                  updateCart();
+
+              }
+
+              function updateCart() {
+
+                  document.getElementById("cartCount")
+                      .textContent =
+                      cart.length;
+
+                  document.getElementById("bottomCart")
+                      .style.display =
+                      cart.length > 0
+                          ? "flex"
+                          : "none";
+
+              }
+
+              function openCart() {
+
+                  if (cart.length === 0) {
+
+                      alert("السلة فارغة");
+
+                      return;
+
+                  }
+
+                  hideAllPages();
+
+                  document.getElementById("cartPage")
+                      .style.display = "block";
+
+                  renderCart();
+
+              }
+
+              window.openCart = openCart;
+
+              function goRestaurant() {
+
+                  hideAllPages();
+
+                  document.getElementById("restaurantPage")
+                      .style.display = "block";
+
+              }
+
+              window.goRestaurant = goRestaurant;
+
+              function renderCart() {
+
+                  const container =
+                      document.getElementById("cartItems");
+
+                  container.innerHTML = "";
+
+                  let total = 0;
+
+                  cart.forEach(function(item, index) {
+
+                      total += item.price;
+
+                      const element =
+                          document.createElement("div");
+
+                      element.className = "cart-item";
+
+                      element.innerHTML = `
+
+                          <div>
+
+                              <div class="cart-item-name">
+                                  ${item.name}
+                              </div>
+
+                              <div class="cart-item-price">
+                                  ${item.price.toLocaleString()} د.ع
+                              </div>
+
+                          </div>
+
+                          <button class="remove-button">
+                              حذف
+                          </button>
+                      `;
+
+                      element
+                          .querySelector(".remove-button")
+                          .addEventListener(
+                              "click",
+                              function() {
+
+                                  cart.splice(index, 1);
+
+                                  updateCart();
+
+                                  renderCart();
+
+                              }
+                          );
+
+                      container.appendChild(element);
+
+                  });
+
+                  document.getElementById("totalPrice")
+                      .textContent =
+                      total.toLocaleString();
+
+              }
+
+              function openCheckout() {
+
+                  if (cart.length === 0) {
+
+                      alert("السلة فارغة");
+
+                      return;
+
+                  }
+
+                  hideAllPages();
+
+                  document.getElementById("checkoutPage")
+                      .style.display = "block";
+
+                  let total = 0;
+
+                  cart.forEach(function(item) {
+
+                      total += item.price;
+
+                  });
+
+                  document.getElementById("checkoutTotal")
+                      .textContent =
+                      total.toLocaleString();
+
+              }
+
+              window.openCheckout = openCheckout;
+
+              async function confirmOrder() {
+
+                  const name =
+                      document.getElementById("customerName")
+                          .value.trim();
+
+                  const phone =
+                      document.getElementById("customerPhone")
+                          .value.trim();
+
+                  const address =
+                      document.getElementById("customerAddress")
+                          .value.trim();
+
+                  const notes =
+                      document.getElementById("customerNotes")
+                          .value.trim();
+
+                  if (!name) {
+
+                      alert("اكتب اسمك أولاً");
+
+                      return;
+
+                  }
+
+                  if (!phone) {
+
+                      alert("اكتب رقم الهاتف");
+
+                      return;
+
+                  }
+
+                  if (!address) {
+
+                      alert("اكتب عنوان التوصيل");
+
+                      return;
+
+                  }
+
+                  let total = 0;
+
+                  cart.forEach(function(item) {
+
+                      total += item.price;
+
+                  });
+
+                  const newOrderNumber =
+                      orderNumber;
+
+                  try {
+
+                      await addDoc(
+                          collection(db, "orders"),
+                          {
+
+                              orderNumber:
+                                  newOrderNumber,
+
+                              customerName:
+                                  name,
+
+                              customerPhone:
+                                  phone,
+
+                              customerAddress:
+                                  address,
+
+                              customerNotes:
+                                  notes,
+
+                              items:
+                                  cart,
+
+                              total:
+                                  total,
+
+                              shopId:
+                                  currentShop
+                                      ? currentShop.id
+                                      : "",
+
+                              shopName:
+                                  currentShop
+                                      ? currentShop.name
+                                      : "",
+
+                              status:
+                                  "جديد",
+
+                              createdAt:
+                                  serverTimestamp()
+
+                          }
+                      );
+
+                      orderNumber++;
+
+                      localStorage.setItem(
+                          "talkaifOrderNumber",
+                          orderNumber
+                      );
+
+                      document.getElementById("orderNumber")
+                          .textContent =
+                          "#" + newOrderNumber;
+
+                      cart = [];
+
+                      updateCart();
+
+                      hideAllPages();
+
+                      document.getElementById("successPage")
+                          .style.display = "block";
+
+                      document.getElementById("customerName")
+                          .value = "";
+
+                      document.getElementById("customerPhone")
+                          .value = "";
+
+                      document.getElementById("customerAddress")
+                          .value = "";
+
+                      document.getElementById("customerNotes")
+                          .value = "";
+
+                  } catch (error) {
+
+                      console.error(error);
+
+                      alert(
+                          "تعذر إرسال الطلب. تأكد من اتصال الإنترنت."
+                      );
+
+                  }
+
+              }
+
+              window.confirmOrder = confirmOrder;
+
+              document.getElementById("searchInput")
+                  .addEventListener(
+                      "input",
+                      function() {
+
+                          const search =
+                              this.value
+                                  .trim()
+                                  .toLowerCase();
+
+                          const shops =
+                              document.querySelectorAll(".shop");
+
+                          shops.forEach(function(shop) {
+
+                              const text =
+                                  shop.textContent
+                                      .toLowerCase();
+
+                              shop.style.display =
+                                  text.includes(search)
+                                      ? "block"
+                                      : "none";
+
+                          });
+
+                      }
+                  );
+
+              loadShops();
+
+          </script>
+
+          </body>
+          </html>
+          HTML_EOF
 
       - name: Install dependencies
         run: npm install
+
+      - name: Build web app
+        run: npm run build
+
+      - name: Create Android project
+        run: npx cap add android
 
       - name: Sync Capacitor
         run: npx cap sync android
 
       - name: Make Gradle executable
-        run: chmod +x ./gradlew
+        run: chmod +x android/gradlew
 
       - name: Build APK
+        working-directory: android
         run: ./gradlew assembleDebug
 
       - name: Upload APK
