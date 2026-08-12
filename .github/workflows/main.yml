@@ -2,61 +2,63 @@ name: Build Talkaif Go APK
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
   build:
+    name: Build Android APK
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      # 1. تحميل المشروع
+      - name: Checkout repository
         uses: actions/checkout@v4
 
+      # 2. تثبيت Java 21 فعلياً
+      # هذا هو الإصلاح الأساسي لخطأ:
+      # error: invalid source release: 21
       - name: Setup Java 21
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: "21"
+          java-version: '21'
+          cache: gradle
 
-      - name: Setup Node
+      # 3. تثبيت Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: '22'
+          cache: npm
 
-      - name: Install Capacitor
+      # 4. التأكد من إصدارات Java
+      - name: Check Java version
         run: |
-          npm init -y
-          npm install @capacitor/core @capacitor/cli @capacitor/android
+          java -version
+          javac -version
 
-      - name: Prepare web files
-        run: |
-          mkdir -p www
-          cp index.html www/index.html
+      # 5. تثبيت مكتبات المشروع
+      - name: Install dependencies
+        run: npm install
 
-      - name: Create Capacitor project
-        run: |
-          cat > capacitor.config.json <<'EOF'
-          {
-            "appId": "com.talkaif.go",
-            "appName": "Talkaif Go",
-            "webDir": "www",
-            "server": {
-              "androidScheme": "https"
-            }
-          }
-          EOF
+      # 6. مزامنة Capacitor مع Android
+      - name: Sync Capacitor
+        run: npx cap sync android
 
-      - name: Add Android
-        run: npx cap add android
+      # 7. إعطاء Gradle صلاحية التشغيل
+      - name: Make Gradle executable
+        run: chmod +x ./gradlew
 
-      - name: Copy web files
-        run: npx cap copy android
-
+      # 8. بناء APK Debug
       - name: Build APK
-        working-directory: android
         run: ./gradlew assembleDebug
 
+      # 9. رفع APK كملف قابل للتنزيل من Actions
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: talkaif-go-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
