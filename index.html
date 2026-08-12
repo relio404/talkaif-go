@@ -1,1333 +1,2939 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Talkaif Go</title>
 
-    <title>Talkaif Go</title>
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
 
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+:root{
+    --yellow:#ffd21c;
+    --yellow2:#ffb800;
+    --dark:#151515;
+    --dark2:#242424;
+    --bg:#f5f6f8;
+    --white:#fff;
+    --green:#20a463;
+    --red:#e5484d;
+    --blue:#3978ff;
+    --gray:#777;
+}
 
-        body {
-            font-family: Arial, sans-serif;
-            background: #f5f5f5;
-            color: #222;
-            padding-bottom: 90px;
-        }
+body{
+    font-family:Arial,sans-serif;
+    background:var(--bg);
+    color:#171717;
+    padding-bottom:90px;
+}
 
-        button,
-        input,
-        textarea {
-            font-family: inherit;
-        }
+button,input,textarea{
+    font-family:inherit;
+}
 
-        button {
-            cursor: pointer;
-        }
+button{
+    cursor:pointer;
+    transition:
+        transform .18s ease,
+        box-shadow .18s ease,
+        background .18s ease,
+        opacity .18s ease;
+}
 
-        .header {
-            background: #ffcc00;
-            padding: 24px 18px;
-            border-radius: 0 0 25px 25px;
-        }
+button:active{
+    transform:scale(.94);
+}
 
-        .logo {
-            font-size: 30px;
-            font-weight: bold;
-            margin-bottom: 8px;
-        }
+button:hover{
+    box-shadow:0 7px 18px rgba(0,0,0,.12);
+}
 
-        .subtitle {
-            font-size: 15px;
-            margin-bottom: 18px;
-        }
+.header{
+    background:
+        linear-gradient(135deg,#ffd21c 0%,#ffbf00 100%);
+    padding:22px 16px 28px;
+    border-radius:0 0 30px 30px;
+    box-shadow:0 8px 30px rgba(255,190,0,.18);
+}
 
-        .search {
-            width: 100%;
-            padding: 15px 18px;
-            border: none;
-            border-radius: 14px;
-            font-size: 16px;
-            outline: none;
-        }
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    margin-bottom:9px;
+}
 
-        .container {
-            padding: 22px 16px;
-        }
+.logo{
+    font-size:30px;
+    font-weight:900;
+    letter-spacing:-1px;
+}
 
-        .section-title {
-            font-size: 22px;
-            margin-bottom: 14px;
-        }
+.subtitle{
+    font-size:14px;
+    margin-bottom:17px;
+    color:#292929;
+}
 
-        .shop,
-        .food-item,
-        .cart-item,
-        .form-box,
-        .total-box {
-            background: white;
-            border-radius: 18px;
-            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
-        }
+.header-actions{
+    display:flex;
+    gap:7px;
+}
 
-        .shop {
-            padding: 15px;
-            margin-bottom: 15px;
-        }
+.header-btn{
+    border:0;
+    background:rgba(255,255,255,.85);
+    padding:10px 12px;
+    border-radius:13px;
+    font-weight:800;
+}
 
-        .shop-image {
-            width: 100%;
-            height: 160px;
-            object-fit: cover;
-            border-radius: 14px;
-            margin-bottom: 12px;
-        }
+.search{
+    width:100%;
+    padding:15px 18px;
+    border:0;
+    border-radius:16px;
+    font-size:16px;
+    outline:none;
+    box-shadow:0 5px 18px rgba(0,0,0,.08);
+}
 
-        .shop-name {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 6px;
-        }
+.container{
+    padding:21px 15px;
+}
 
-        .shop-info {
-            color: #777;
-            font-size: 14px;
-            margin-bottom: 12px;
-        }
+.section-title{
+    font-size:22px;
+    margin-bottom:14px;
+}
 
-        .open-button,
-        .checkout-button,
-        .confirm-button {
-            width: 100%;
-            border: none;
-            background: #222;
-            color: white;
-            padding: 14px;
-            border-radius: 12px;
-            font-size: 16px;
-        }
+.shop,
+.food-item,
+.cart-item,
+.form-box,
+.total-box,
+.status-card,
+.account-card,
+.admin-order{
+    background:var(--white);
+    border-radius:19px;
+    box-shadow:0 4px 18px rgba(0,0,0,.055);
+}
 
-        #restaurantPage,
-        #cartPage,
-        #checkoutPage,
-        #successPage {
-            display: none;
-        }
+.shop{
+    padding:14px;
+    margin-bottom:15px;
+    animation:fadeUp .45s ease both;
+}
 
-        .back-button {
-            border: none;
-            background: white;
-            padding: 10px 16px;
-            border-radius: 12px;
-            font-size: 16px;
-            margin-bottom: 15px;
-        }
+.shop-image{
+    width:100%;
+    height:165px;
+    object-fit:cover;
+    border-radius:15px;
+    margin-bottom:11px;
+}
 
-        .restaurant-cover {
-            width: 100%;
-            height: 190px;
-            object-fit: cover;
-            border-radius: 18px;
-            margin-bottom: 15px;
-        }
+.shop-name{
+    font-size:20px;
+    font-weight:900;
+    margin-bottom:5px;
+}
 
-        .restaurant-title {
-            font-size: 26px;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
+.shop-info{
+    color:#777;
+    font-size:14px;
+    margin-bottom:12px;
+}
 
-        .restaurant-description {
-            color: #777;
-            margin-bottom: 25px;
-        }
+.open-button,
+.checkout-button,
+.confirm-button,
+.secondary-button{
+    width:100%;
+    border:0;
+    padding:14px;
+    border-radius:14px;
+    font-size:16px;
+    font-weight:800;
+}
 
-        .food-item {
-            padding: 14px;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+.open-button{
+    background:linear-gradient(135deg,#181818,#303030);
+    color:white;
+}
 
-        .food-image {
-            width: 85px;
-            height: 85px;
-            object-fit: cover;
-            border-radius: 12px;
-            flex-shrink: 0;
-        }
+.checkout-button,
+.confirm-button{
+    background:linear-gradient(135deg,#ffd21c,#ffb900);
+    color:#161616;
+    margin-top:14px;
+}
 
-        .food-info {
-            flex: 1;
-        }
+.secondary-button{
+    background:#242424;
+    color:#fff;
+    margin-top:10px;
+}
 
-        .food-name {
-            font-size: 17px;
-            font-weight: bold;
-            margin-bottom: 6px;
-        }
+.green-button{
+    background:var(--green)!important;
+    color:white!important;
+}
 
-        .food-description {
-            font-size: 13px;
-            color: #888;
-            margin-bottom: 7px;
-        }
+.red-button{
+    background:var(--red)!important;
+    color:white!important;
+}
 
-        .food-price {
-            font-weight: bold;
-            font-size: 16px;
-        }
+.blue-button{
+    background:var(--blue)!important;
+    color:white!important;
+}
 
-        .add-button {
-            background: #ffcc00;
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            font-size: 23px;
-            font-weight: bold;
-        }
+.whatsapp-button{
+    background:#20a463!important;
+    color:white!important;
+}
 
-        .bottom-cart {
-            position: fixed;
-            bottom: 15px;
-            left: 15px;
-            right: 15px;
-            background: #222;
-            color: white;
-            padding: 15px;
-            border-radius: 15px;
-            display: none;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 10;
-        }
+#restaurantPage,
+#cartPage,
+#checkoutPage,
+#successPage,
+#loginPage,
+#accountPage,
+#adminPage{
+    display:none;
+}
 
-        .cart-button {
-            background: #ffcc00;
-            color: #222;
-            border: none;
-            padding: 10px 16px;
-            border-radius: 10px;
-            font-weight: bold;
-        }
+.back-button{
+    border:0;
+    background:#fff;
+    padding:10px 15px;
+    border-radius:13px;
+    font-size:16px;
+    margin-bottom:14px;
+}
 
-        .cart-item {
-            padding: 15px;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+.restaurant-cover{
+    width:100%;
+    height:190px;
+    object-fit:cover;
+    border-radius:19px;
+    margin-bottom:14px;
+}
 
-        .cart-item-name {
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
+.restaurant-title{
+    font-size:27px;
+    font-weight:900;
+}
 
-        .cart-item-price {
-            color: #777;
-        }
+.restaurant-description{
+    color:#777;
+    margin:5px 0 22px;
+}
 
-        .remove-button {
-            background: #eee;
-            border: none;
-            border-radius: 10px;
-            padding: 8px 12px;
-        }
+.food-item{
+    padding:13px;
+    margin-bottom:11px;
+    display:flex;
+    align-items:center;
+    gap:11px;
+    animation:fadeUp .4s ease both;
+}
 
-        .total-box {
-            padding: 18px;
-            margin-top: 20px;
-            font-size: 19px;
-            font-weight: bold;
-        }
+.food-image{
+    width:82px;
+    height:82px;
+    object-fit:cover;
+    border-radius:13px;
+    flex-shrink:0;
+}
 
-        .checkout-button {
-            background: #ffcc00;
-            color: #222;
-            margin-top: 15px;
-            font-weight: bold;
-        }
+.food-info{
+    flex:1;
+}
 
-        .form-box {
-            padding: 18px;
-        }
+.food-name{
+    font-size:17px;
+    font-weight:800;
+    margin-bottom:5px;
+}
 
-        .form-label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 7px;
-            margin-top: 16px;
-        }
+.food-description{
+    font-size:13px;
+    color:#888;
+    margin-bottom:6px;
+}
 
-        .form-input,
-        .form-textarea {
-            width: 100%;
-            border: 1px solid #ddd;
-            border-radius: 12px;
-            padding: 14px;
-            font-size: 16px;
-            outline: none;
-        }
+.food-price{
+    font-weight:800;
+}
 
-        .form-textarea {
-            height: 100px;
-            resize: none;
-        }
+.add-button{
+    background:linear-gradient(135deg,#ffd21c,#ffb900);
+    border:0;
+    width:43px;
+    height:43px;
+    border-radius:50%;
+    font-size:23px;
+    font-weight:900;
+}
 
-        .payment-box {
-            background: #f7f7f7;
-            border-radius: 12px;
-            padding: 14px;
-            margin-top: 8px;
-        }
+.bottom-cart{
+    position:fixed;
+    bottom:13px;
+    left:13px;
+    right:13px;
+    background:#191919;
+    color:#fff;
+    padding:13px;
+    border-radius:17px;
+    display:none;
+    justify-content:space-between;
+    align-items:center;
+    z-index:50;
+    box-shadow:0 8px 30px rgba(0,0,0,.2);
+    animation:slideUp .3s ease;
+}
 
-        .final-total {
-            background: #222;
-            color: white;
-            padding: 18px;
-            border-radius: 15px;
-            margin-top: 18px;
-            text-align: center;
-            font-size: 19px;
-            font-weight: bold;
-        }
+.cart-button{
+    background:var(--yellow);
+    color:#222;
+    border:0;
+    padding:10px 16px;
+    border-radius:11px;
+    font-weight:800;
+}
 
-        .confirm-button {
-            background: #ffcc00;
-            color: #222;
-            margin-top: 15px;
-            font-weight: bold;
-        }
+.cart-item{
+    padding:14px;
+    margin-bottom:10px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
 
-        .success {
-            text-align: center;
-            padding-top: 60px;
-        }
+.cart-item-name{
+    font-weight:800;
+    margin-bottom:4px;
+}
 
-        .success-icon {
-            font-size: 65px;
-            margin-bottom: 20px;
-        }
+.cart-item-price{
+    color:#777;
+}
 
-        .success h1 {
-            font-size: 28px;
-            margin-bottom: 12px;
-        }
+.remove-button{
+    background:#eee;
+    border:0;
+    border-radius:10px;
+    padding:8px 11px;
+}
 
-        .success p {
-            color: #777;
-            line-height: 1.7;
-            margin-bottom: 25px;
-        }
+.total-box{
+    padding:17px;
+    margin-top:18px;
+    font-size:19px;
+    font-weight:800;
+}
 
-        .order-number {
-            background: white;
-            border-radius: 15px;
-            padding: 18px;
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
+.form-box{
+    padding:17px;
+}
 
-        .home-button {
-            background: #222;
-            color: white;
-            border: none;
-            padding: 15px 25px;
-            border-radius: 13px;
-            font-size: 16px;
-        }
+.form-label{
+    display:block;
+    font-weight:800;
+    margin:15px 0 7px;
+}
 
-        .loading {
-            text-align: center;
-            padding: 30px;
-            color: #777;
-        }
+.form-input,
+.form-textarea{
+    width:100%;
+    border:1px solid #ddd;
+    border-radius:13px;
+    padding:13px;
+    font-size:16px;
+    outline:none;
+    background:#fff;
+    transition:.2s;
+}
 
-        .error {
-            background: #ffe5e5;
-            color: #b00000;
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 15px;
-        }
-    </style>
+.form-input:focus,
+.form-textarea:focus{
+    border-color:#ffbf00;
+    box-shadow:0 0 0 3px rgba(255,191,0,.14);
+}
+
+.form-textarea{
+    height:90px;
+    resize:none;
+}
+
+.payment-box{
+    background:#f7f7f7;
+    border-radius:13px;
+    padding:13px;
+    margin-top:7px;
+}
+
+.final-total{
+    background:linear-gradient(135deg,#171717,#292929);
+    color:#fff;
+    padding:17px;
+    border-radius:15px;
+    margin-top:16px;
+    text-align:center;
+    font-size:19px;
+    font-weight:800;
+}
+
+.success{
+    text-align:center;
+    padding-top:50px;
+}
+
+.success-icon{
+    font-size:65px;
+    margin-bottom:14px;
+    color:var(--green);
+    animation:pop .5s ease;
+}
+
+.success h1{
+    font-size:28px;
+    margin-bottom:10px;
+}
+
+.success p{
+    color:#777;
+    line-height:1.7;
+    margin-bottom:20px;
+}
+
+.order-number{
+    background:#fff;
+    border-radius:15px;
+    padding:17px;
+    font-size:20px;
+    font-weight:800;
+    margin-bottom:14px;
+}
+
+.location-box{
+    background:#f7f7f7;
+    padding:13px;
+    border-radius:14px;
+    margin-top:8px;
+}
+
+.location-status{
+    font-size:14px;
+    color:#777;
+    line-height:1.6;
+}
+
+.location-buttons{
+    display:flex;
+    gap:8px;
+    margin-top:10px;
+}
+
+.location-buttons button{
+    flex:1;
+    border:0;
+    padding:12px 8px;
+    border-radius:12px;
+    font-weight:800;
+}
+
+.gps-button{
+    background:linear-gradient(135deg,#ffd21c,#ffb800);
+}
+
+.map-button{
+    background:#222;
+    color:#fff;
+}
+
+.location-success{
+    color:#16834d;
+    font-weight:700;
+}
+
+.loading{
+    text-align:center;
+    padding:28px;
+    color:#777;
+}
+
+.error{
+    background:#ffe5e5;
+    color:#a00;
+    padding:14px;
+    border-radius:12px;
+}
+
+.divider{
+    height:1px;
+    background:#eee;
+    margin:16px 0;
+}
+
+.muted{
+    color:#777;
+    font-size:14px;
+    line-height:1.6;
+}
+
+/* ADMIN */
+
+.admin-header{
+    background:linear-gradient(135deg,#171717,#292929);
+    color:white;
+    padding:22px 17px;
+    border-radius:0 0 27px 27px;
+    box-shadow:0 8px 25px rgba(0,0,0,.12);
+}
+
+.admin-title{
+    font-size:27px;
+    font-weight:900;
+}
+
+.admin-subtitle{
+    color:#bbb;
+    margin-top:5px;
+    font-size:14px;
+}
+
+.admin-stats{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:9px;
+    margin:17px 0;
+}
+
+.stat{
+    background:#fff;
+    border-radius:16px;
+    padding:14px 8px;
+    text-align:center;
+    box-shadow:0 4px 15px rgba(0,0,0,.05);
+}
+
+.stat-number{
+    font-size:22px;
+    font-weight:900;
+}
+
+.stat-label{
+    color:#777;
+    font-size:12px;
+    margin-top:4px;
+}
+
+.admin-order{
+    padding:16px;
+    margin-bottom:13px;
+    animation:fadeUp .35s ease both;
+}
+
+.admin-order-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:8px;
+    margin-bottom:12px;
+}
+
+.admin-order-number{
+    font-size:20px;
+    font-weight:900;
+}
+
+.status-badge{
+    padding:7px 10px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:800;
+}
+
+.status-new{
+    background:#fff0bd;
+    color:#805d00;
+}
+
+.status-accepted{
+    background:#dce8ff;
+    color:#2555aa;
+}
+
+.status-delivery{
+    background:#dff7eb;
+    color:#16834d;
+}
+
+.status-done{
+    background:#e7e7e7;
+    color:#444;
+}
+
+.status-rejected{
+    background:#ffe0e0;
+    color:#a00;
+}
+
+.order-row{
+    margin:7px 0;
+    line-height:1.6;
+}
+
+.order-row b{
+    color:#222;
+}
+
+.order-items{
+    background:#f7f7f7;
+    border-radius:12px;
+    padding:11px;
+    margin:11px 0;
+    font-size:14px;
+    line-height:1.8;
+}
+
+.admin-actions{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    margin-top:12px;
+}
+
+.admin-actions button{
+    border:0;
+    padding:12px 7px;
+    border-radius:12px;
+    font-weight:800;
+}
+
+.admin-full{
+    grid-column:1/-1;
+}
+
+.admin-login{
+    padding-top:70px;
+}
+
+.admin-lock{
+    text-align:center;
+    font-size:55px;
+    margin-bottom:15px;
+}
+
+@keyframes fadeUp{
+    from{
+        opacity:0;
+        transform:translateY(12px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+@keyframes slideUp{
+    from{
+        opacity:0;
+        transform:translateY(25px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+@keyframes pop{
+    0%{transform:scale(.5);opacity:0}
+    70%{transform:scale(1.12)}
+    100%{transform:scale(1);opacity:1}
+}
+</style>
 </head>
 
 <body>
 
+<!-- HOME -->
+
 <div id="homePage">
 
-    <header class="header">
+<header class="header">
 
-        <div class="logo">Talkaif Go</div>
+<div class="topbar">
 
-        <div class="subtitle">
-            اطلب من محلات تلكيف ويوصلك طلبك لباب البيت
-        </div>
+<div class="logo">
+Talkaif Go
+</div>
 
-        <input
-            id="searchInput"
-            class="search"
-            type="text"
-            placeholder="ابحث عن محل أو منتج..."
-        >
+<div class="header-actions">
 
-    </header>
+<button class="header-btn" onclick="openAccount()">
+حسابي
+</button>
 
-    <main class="container">
-
-        <h2 class="section-title">المحلات</h2>
-
-        <div id="shopsContainer" class="loading">
-            جاري تحميل المحلات...
-        </div>
-
-    </main>
+<button class="header-btn" onclick="openAdmin()">
+الإدارة
+</button>
 
 </div>
 
+</div>
+
+<div class="subtitle">
+اطلب من محلات تلكيف ويوصلك طلبك لباب البيت
+</div>
+
+<input
+id="searchInput"
+class="search"
+type="text"
+placeholder="ابحث عن محل أو منتج..."
+>
+
+</header>
+
+<main class="container">
+
+<h2 class="section-title">
+المحلات
+</h2>
+
+<div id="shopsContainer" class="loading">
+جاري تحميل المحلات...
+</div>
+
+</main>
+
+</div>
+
+
+<!-- RESTAURANT -->
 
 <div id="restaurantPage">
 
-    <main class="container">
+<main class="container">
 
-        <button class="back-button" onclick="goHome()">
-            ← رجوع
-        </button>
+<button class="back-button" onclick="goHome()">
+← رجوع
+</button>
 
-        <img
-            id="restaurantCover"
-            class="restaurant-cover"
-            src=""
-            alt="المطعم"
-        >
+<img
+id="restaurantCover"
+class="restaurant-cover"
+src=""
+alt="المحل"
+>
 
-        <div id="restaurantTitle" class="restaurant-title"></div>
+<div id="restaurantTitle" class="restaurant-title"></div>
 
-        <div id="restaurantDescription" class="restaurant-description"></div>
+<div id="restaurantDescription" class="restaurant-description"></div>
 
-        <h2 class="section-title">
-            قائمة الطعام
-        </h2>
+<h2 class="section-title">
+قائمة الطعام
+</h2>
 
-        <div id="productsContainer" class="loading">
-            جاري تحميل المنتجات...
-        </div>
+<div id="productsContainer" class="loading">
+جاري تحميل المنتجات...
+</div>
 
-    </main>
+</main>
 
 </div>
 
+
+<!-- CART -->
 
 <div id="cartPage">
 
-    <main class="container">
+<main class="container">
 
-        <button class="back-button" onclick="goRestaurant()">
-            ← الرجوع للقائمة
-        </button>
+<button class="back-button" onclick="goRestaurant()">
+← الرجوع للقائمة
+</button>
 
-        <h2 class="section-title">
-            سلة الطلب
-        </h2>
+<h2 class="section-title">
+سلة الطلب
+</h2>
 
-        <div id="cartItems"></div>
+<div id="cartItems"></div>
 
-        <div class="total-box">
+<div class="total-box">
 
-            المجموع:
-            <span id="totalPrice">0</span>
-            د.ع
+المجموع:
+<span id="totalPrice">0</span>
+د.ع
 
-            <button
-                class="checkout-button"
-                onclick="openCheckout()"
-            >
-                إتمام الطلب
-            </button>
-
-        </div>
-
-    </main>
+<button
+class="checkout-button"
+onclick="openCheckout()"
+>
+إتمام الطلب
+</button>
 
 </div>
 
+</main>
+
+</div>
+
+
+<!-- CHECKOUT -->
 
 <div id="checkoutPage">
 
-    <main class="container">
+<main class="container">
 
-        <button class="back-button" onclick="openCart()">
-            ← الرجوع للسلة
-        </button>
+<button class="back-button" onclick="openCart()">
+← الرجوع للسلة
+</button>
 
-        <h2 class="section-title">
-            معلومات التوصيل
-        </h2>
+<h2 class="section-title">
+معلومات التوصيل
+</h2>
 
-        <div class="form-box">
+<div class="form-box">
 
-            <label class="form-label">الاسم</label>
+<label class="form-label">
+الاسم *
+</label>
 
-            <input
-                id="customerName"
-                class="form-input"
-                type="text"
-                placeholder="اكتب اسمك"
-            >
+<input
+id="customerName"
+class="form-input"
+type="text"
+placeholder="اكتب اسمك"
+>
 
-            <label class="form-label">رقم الهاتف</label>
+<label class="form-label">
+رقم الهاتف *
+</label>
 
-            <input
-                id="customerPhone"
-                class="form-input"
-                type="tel"
-                placeholder="07xxxxxxxxx"
-            >
+<input
+id="customerPhone"
+class="form-input"
+type="tel"
+placeholder="077xxxxxxxx"
+>
 
-            <label class="form-label">العنوان</label>
+<label class="form-label">
+موقع التوصيل *
+</label>
 
-            <input
-                id="customerAddress"
-                class="form-input"
-                type="text"
-                placeholder="مثال: تلكيف، قرب..."
-            >
+<input
+id="customerAddress"
+class="form-input"
+type="text"
+placeholder="اكتب العنوان"
+>
 
-            <label class="form-label">ملاحظات إضافية</label>
+<div class="location-box">
 
-            <textarea
-                id="customerNotes"
-                class="form-textarea"
-                placeholder="مثلاً: اتصل بي عند الوصول"
-            ></textarea>
+<div id="locationText" class="location-status">
+لم يتم تحديد موقع GPS بعد.
+</div>
 
-            <label class="form-label">طريقة الدفع</label>
+<div class="location-buttons">
 
-            <div class="payment-box">
-                الدفع نقدًا عند الاستلام
-            </div>
+<button
+class="gps-button"
+onclick="useCurrentLocation()"
+>
+تحديد موقعي
+</button>
 
-            <div class="final-total">
-
-                المجموع:
-                <span id="checkoutTotal">0</span>
-                د.ع
-
-            </div>
-
-            <button
-                class="confirm-button"
-                onclick="confirmOrder()"
-            >
-                تأكيد الطلب
-            </button>
-
-        </div>
-
-    </main>
+<button
+class="map-button"
+onclick="openGoogleMaps()"
+>
+فتح الخريطة
+</button>
 
 </div>
 
+</div>
+
+
+<label class="form-label">
+ملاحظات إضافية
+</label>
+
+<textarea
+id="customerNotes"
+class="form-textarea"
+placeholder="مثلاً: اتصل بي عند الوصول"
+></textarea>
+
+
+<label class="form-label">
+طريقة الدفع
+</label>
+
+<div class="payment-box">
+الدفع نقدًا عند الاستلام
+</div>
+
+
+<div class="final-total">
+
+المجموع:
+<span id="checkoutTotal">0</span>
+د.ع
+
+</div>
+
+
+<button
+class="confirm-button"
+onclick="confirmOrder()"
+>
+تأكيد وإرسال الطلب
+</button>
+
+</div>
+
+</main>
+
+</div>
+
+
+<!-- SUCCESS -->
 
 <div id="successPage">
 
-    <main class="container">
+<main class="container">
 
-        <div class="success">
+<div class="success">
 
-            <div class="success-icon">
-                ✓
-            </div>
+<div class="success-icon">
+✓
+</div>
 
-            <h1>
-                تم استلام طلبك
-            </h1>
+<h1>
+تم إرسال طلبك
+</h1>
 
-            <p>
-                شكرًا لاستخدامك Talkaif Go.<br>
-                سنقوم بتجهيز طلبك وتوصيله إليك.
-            </p>
+<p>
+تم استلام طلبك بنجاح.<br>
+انتظر موافقة الإدارة.
+</p>
 
-            <div class="order-number">
+<div class="order-number">
 
-                رقم الطلب:
-                <span id="orderNumber"></span>
+رقم الطلب:
+<span id="orderNumber"></span>
 
-            </div>
+</div>
 
-            <button
-                class="home-button"
-                onclick="goHome()"
-            >
-                العودة للرئيسية
-            </button>
+<div id="driverInfo"
+style="display:none;background:#fff;padding:16px;border-radius:16px;margin-bottom:12px;box-shadow:0 4px 15px rgba(0,0,0,.06)"
+>
+<div style="font-weight:900;font-size:18px;margin-bottom:7px">
+بيانات المندوب
+</div>
 
-        </div>
+<div id="driverName">
+المندوب: -
+</div>
 
-    </main>
+<div id="driverPhone">
+رقم المندوب: -
+</div>
+
+<button
+class="secondary-button whatsapp-button"
+onclick="contactDriver()"
+>
+واتساب المندوب
+</button>
+
+<button
+class="secondary-button"
+onclick="callDriver()"
+>
+اتصال بالمندوب
+</button>
+
+</div>
+
+<button
+class="home-button secondary-button"
+onclick="goHome()"
+>
+العودة للرئيسية
+</button>
+
+</div>
+
+</main>
 
 </div>
 
 
+<!-- LOGIN -->
+
+<div id="loginPage">
+
+<main class="container">
+
+<button class="back-button" onclick="goHome()">
+← الرئيسية
+</button>
+
+<h2 class="section-title">
+حسابي
+</h2>
+
+<div class="form-box">
+
+<label class="form-label">
+رقم الهاتف
+</label>
+
+<input
+id="loginPhone"
+class="form-input"
+type="tel"
+placeholder="077xxxxxxxx"
+>
+
+<label class="form-label">
+كلمة السر
+</label>
+
+<input
+id="loginPassword"
+class="form-input"
+type="password"
+placeholder="كلمة السر"
+>
+
+<label class="form-label">
+تأكيد كلمة السر
+</label>
+
+<input
+id="confirmPassword"
+class="form-input"
+type="password"
+placeholder="أعد كتابة كلمة السر"
+>
+
+<button
+class="confirm-button"
+onclick="registerAccount()"
+>
+إنشاء حساب
+</button>
+
+<button
+class="secondary-button"
+onclick="loginAccount()"
+>
+تسجيل الدخول
+</button>
+
+</div>
+
+</main>
+
+</div>
+
+
+<!-- ACCOUNT -->
+
+<div id="accountPage">
+
+<main class="container">
+
+<button class="back-button" onclick="goHome()">
+← الرئيسية
+</button>
+
+<h2 class="section-title">
+حسابي
+</h2>
+
+<div class="account-card">
+
+<div>
+<b>رقم الهاتف</b>
+
+<div
+id="accountPhone"
+class="muted"
+>
+غير مسجل
+</div>
+
+</div>
+
+<div class="divider"></div>
+
+<button
+class="secondary-button"
+onclick="showLastOrder()"
+>
+آخر طلب
+</button>
+
+<button
+class="secondary-button"
+onclick="logoutAccount()"
+>
+تسجيل الخروج
+</button>
+
+</div>
+
+</main>
+
+</div>
+
+
+<!-- ADMIN LOGIN -->
+
+<div id="adminPage">
+
+<div class="admin-header">
+
+<div class="admin-title">
+Talkaif Go | الإدارة
+</div>
+
+<div class="admin-subtitle">
+لوحة إدارة الطلبات
+</div>
+
+</div>
+
+<main class="container">
+
+<div id="adminLoginBox" class="form-box admin-login">
+
+<div class="admin-lock">
+🔐
+</div>
+
+<h2 style="text-align:center;margin-bottom:18px">
+دخول الإدارة
+</h2>
+
+<label class="form-label">
+كلمة مرور الإدارة
+</label>
+
+<input
+id="adminPassword"
+class="form-input"
+type="password"
+placeholder="كلمة المرور"
+>
+
+<button
+class="confirm-button"
+onclick="loginAdmin()"
+>
+دخول لوحة الإدارة
+</button>
+
+<button
+class="secondary-button"
+onclick="goHome()"
+>
+العودة للرئيسية
+</button>
+
+</div>
+
+
+<div
+id="adminDashboard"
+style="display:none"
+>
+
+<button
+class="secondary-button"
+onclick="goHome()"
+style="margin-bottom:15px"
+>
+← الرئيسية
+</button>
+
+<div class="admin-stats">
+
+<div class="stat">
+<div id="statAll" class="stat-number">0</div>
+<div class="stat-label">كل الطلبات</div>
+</div>
+
+<div class="stat">
+<div id="statNew" class="stat-number">0</div>
+<div class="stat-label">جديدة</div>
+</div>
+
+<div class="stat">
+<div id="statDelivery" class="stat-number">0</div>
+<div class="stat-label">توصيل</div>
+</div>
+
+</div>
+
+<div style="display:flex;gap:8px;margin-bottom:15px">
+
+<button
+class="secondary-button"
+onclick="loadAdminOrders()"
+style="margin:0"
+>
+تحديث الطلبات
+</button>
+
+<button
+class="secondary-button red-button"
+onclick="logoutAdmin()"
+style="margin:0"
+>
+خروج
+</button>
+
+</div>
+
+<div id="adminOrders">
+<div class="loading">
+جاري تحميل الطلبات...
+</div>
+</div>
+
+</div>
+
+</main>
+
+</div>
+
+
+<!-- BOTTOM CART -->
+
 <div id="bottomCart" class="bottom-cart">
 
-    <div>
-        السلة:
-        <span id="cartCount">0</span>
-        منتج
-    </div>
+<div>
+السلة:
+<span id="cartCount">0</span>
+منتج
+</div>
 
-    <button
-        class="cart-button"
-        onclick="openCart()"
-    >
-        عرض السلة
-    </button>
+<button
+class="cart-button"
+onclick="openCart()"
+>
+عرض السلة
+</button>
 
 </div>
 
 
 <script type="module">
 
-    import {
-        initializeApp
-    } from
-    "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import {
+initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 
+import {
+getFirestore,
+collection,
+getDocs,
+addDoc,
+serverTimestamp,
+doc,
+getDoc,
+updateDoc,
+query,
+orderBy
+}
+from
+"https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
-    import {
-        getFirestore,
-        collection,
-        getDocs,
-        addDoc,
-        serverTimestamp
-    } from
-    "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+import {
+getAuth,
+createUserWithEmailAndPassword,
+signInWithEmailAndPassword,
+signOut,
+onAuthStateChanged
+}
+from
+"https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
 
-    const firebaseConfig = {
+const firebaseConfig={
 
-        apiKey:
-            "AIzaSyCEGkr6NYCWDtRQi91_ZJVDVcjO5J1-3sM",
+apiKey:
+"AIzaSyCEGkr6NYCWDtRQi91_ZJVDVcjO5J1-3sM",
 
-        authDomain:
-            "talkaif.firebaseapp.com",
+authDomain:
+"talkaif.firebaseapp.com",
 
-        projectId:
-            "talkaif",
+projectId:
+"talkaif",
 
-        storageBucket:
-            "talkaif.firebasestorage.app",
+storageBucket:
+"talkaif.firebasestorage.app",
 
-        messagingSenderId:
-            "686912880272",
+messagingSenderId:
+"686912880272",
 
-        appId:
-            "1:686912880272:web:40054135e3e748880d6215",
+appId:
+"1:686912880272:web:40054135e3e748880d6215",
 
-        measurementId:
-            "G-0PS9B27Y1V"
-    };
+measurementId:
+"G-0PS9B27Y1V"
 
+};
 
-    const app =
-        initializeApp(firebaseConfig);
 
-    const db =
-        getFirestore(app);
+const app=initializeApp(firebaseConfig);
 
+const db=getFirestore(app);
 
-    let cart = [];
+const auth=getAuth(app);
 
-    let currentShop = null;
 
-    let currentProducts = [];
+let cart=[];
 
-    let orderNumber =
-        Number(localStorage.getItem("talkaifOrderNumber") || 1001);
+let currentShop=null;
 
+let currentProducts=[];
 
-    function hideAllPages() {
+let selectedLat=null;
 
-        document.getElementById("homePage").style.display = "none";
+let selectedLng=null;
 
-        document.getElementById("restaurantPage").style.display = "none";
+let currentOrderId=
+localStorage.getItem("talkaifLastOrderId")||"";
 
-        document.getElementById("cartPage").style.display = "none";
+let orderNumber=
+Number(
+localStorage.getItem("talkaifOrderNumber")||1001
+);
 
-        document.getElementById("checkoutPage").style.display = "none";
 
-        document.getElementById("successPage").style.display = "none";
+/*
+    رقم المندوب
+*/
+const DRIVER_PHONE="07741956713";
 
-    }
 
+/*
+    كلمة مرور الإدارة.
 
-    function goHome() {
+    غيّرها هنا إلى كلمة مرورك.
+*/
+const ADMIN_PASSWORD="TalkaifGo2026";
 
-        hideAllPages();
 
-        document.getElementById("homePage").style.display = "block";
+let adminLoggedIn=false;
 
-    }
 
+/* =========================
+   الصفحات
+========================= */
 
-    window.goHome = goHome;
+function hideAllPages(){
 
+[
+"homePage",
+"restaurantPage",
+"cartPage",
+"checkoutPage",
+"successPage",
+"loginPage",
+"accountPage",
+"adminPage"
+]
+.forEach(
+id=>{
+document.getElementById(id).style.display="none";
+}
+);
 
-    async function loadShops() {
+}
 
-        const container =
-            document.getElementById("shopsContainer");
 
-        try {
+function show(id){
 
-            const snapshot =
-                await getDocs(
-                    collection(db, "shops")
-                );
+hideAllPages();
 
-            container.innerHTML = "";
+document.getElementById(id).style.display="block";
 
-            if (snapshot.empty) {
+}
 
-                container.className = "loading";
 
-                container.textContent =
-                    "لا توجد محلات حاليًا.";
+function goHome(){
 
-                return;
-            }
+show("homePage");
 
+}
 
-            snapshot.forEach(function(documentSnapshot) {
+window.goHome=goHome;
 
-                const shop =
-                    documentSnapshot.data();
 
-                const shopId =
-                    documentSnapshot.id;
+/* =========================
+   الإدارة
+========================= */
 
+function openAdmin(){
 
-                const shopElement =
-                    document.createElement("div");
+show("adminPage");
 
-                shopElement.className = "shop";
+if(adminLoggedIn){
 
+document.getElementById("adminLoginBox")
+.style.display="none";
 
-                shopElement.innerHTML = `
+document.getElementById("adminDashboard")
+.style.display="block";
 
-                    <img
-                        class="shop-image"
-                        src="${shop.image || "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=900&q=80"}"
-                        alt="المحل"
-                    >
+loadAdminOrders();
 
-                    <div class="shop-name">
-                        ${shop.name || "محل"}
-                    </div>
+}else{
 
-                    <div class="shop-info">
-                        ${shop.description || "توصيل داخل تلكيف"}
-                    </div>
+document.getElementById("adminLoginBox")
+.style.display="block";
 
-                    <button class="open-button">
-                        عرض القائمة
-                    </button>
-                `;
+document.getElementById("adminDashboard")
+.style.display="none";
 
+}
 
-                shopElement
-                    .querySelector(".open-button")
-                    .addEventListener(
-                        "click",
-                        function() {
+}
 
-                            openRestaurant(
-                                shopId,
-                                shop
-                            );
+window.openAdmin=openAdmin;
 
-                        }
-                    );
 
+function loginAdmin(){
 
-                container.appendChild(shopElement);
+const password=
+document.getElementById("adminPassword").value;
 
-            });
+if(password!==ADMIN_PASSWORD){
 
-        } catch (error) {
+alert("كلمة مرور الإدارة غير صحيحة.");
 
-            console.error(error);
+return;
 
-            container.className = "error";
+}
 
-            container.textContent =
-                "تعذر تحميل المحلات.";
+adminLoggedIn=true;
 
-        }
+document.getElementById("adminPassword").value="";
 
-    }
+document.getElementById("adminLoginBox")
+.style.display="none";
 
+document.getElementById("adminDashboard")
+.style.display="block";
 
-    async function openRestaurant(shopId, shop) {
+loadAdminOrders();
 
-        currentShop = {
-            id: shopId,
-            ...shop
-        };
+}
 
-        hideAllPages();
 
-        document.getElementById("restaurantPage")
-            .style.display = "block";
+window.loginAdmin=loginAdmin;
 
 
-        document.getElementById("restaurantTitle")
-            .textContent =
-            shop.name || "محل";
+function logoutAdmin(){
 
+adminLoggedIn=false;
 
-        document.getElementById("restaurantDescription")
-            .textContent =
-            shop.description || "توصيل داخل تلكيف";
+document.getElementById("adminDashboard")
+.style.display="none";
 
+document.getElementById("adminLoginBox")
+.style.display="block";
 
-        document.getElementById("restaurantCover")
-            .src =
-            shop.image ||
-            "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=900&q=80";
+}
 
 
-        await loadProducts(shopId);
+window.logoutAdmin=logoutAdmin;
 
-    }
 
+/* =========================
+   الطلبات للإدارة
+========================= */
 
-    window.openRestaurant = openRestaurant;
+async function loadAdminOrders(){
 
+const container=
+document.getElementById("adminOrders");
 
-    async function loadProducts(shopId) {
+container.innerHTML=
+'<div class="loading">جاري تحميل الطلبات...</div>';
 
-        const container =
-            document.getElementById("productsContainer");
+try{
 
+const snapshot=
+await getDocs(
+collection(db,"orders")
+);
 
-        container.className = "loading";
+let orders=[];
 
-        container.textContent =
-            "جاري تحميل المنتجات...";
+snapshot.forEach(x=>{
 
+orders.push({
+id:x.id,
+...x.data()
+});
 
-        try {
+});
 
-            const snapshot =
-                await getDocs(
-                    collection(db, "products")
-                );
 
+orders.sort((a,b)=>{
 
-            currentProducts = [];
+const aTime=
+a.createdAt?.seconds||0;
 
+const bTime=
+b.createdAt?.seconds||0;
 
-            snapshot.forEach(function(documentSnapshot) {
+return bTime-aTime;
 
-                const product =
-                    documentSnapshot.data();
+});
 
 
-                if (product.shopId === shopId) {
+let newCount=0;
 
-                    currentProducts.push({
-                        id: documentSnapshot.id,
-                        ...product
-                    });
+let deliveryCount=0;
 
-                }
+orders.forEach(o=>{
 
-            });
+if(o.status==="جديد")
+newCount++;
 
+if(o.status==="قيد التوصيل")
+deliveryCount++;
 
-            renderProducts();
+});
 
-        } catch (error) {
 
-            console.error(error);
+document.getElementById("statAll")
+.textContent=orders.length;
 
-            container.className = "error";
+document.getElementById("statNew")
+.textContent=newCount;
 
-            container.textContent =
-                "تعذر تحميل المنتجات.";
+document.getElementById("statDelivery")
+.textContent=deliveryCount;
 
-        }
 
-    }
+if(!orders.length){
 
+container.innerHTML=
+'<div class="loading">لا توجد طلبات حاليًا.</div>';
 
-    function renderProducts() {
+return;
 
-        const container =
-            document.getElementById("productsContainer");
+}
 
 
-        container.innerHTML = "";
+container.innerHTML="";
 
-        container.className = "";
 
+orders.forEach(order=>{
 
-        if (currentProducts.length === 0) {
+const element=
+document.createElement("div");
 
-            container.className = "loading";
+element.className="admin-order";
 
-            container.textContent =
-                "لا توجد منتجات حاليًا.";
 
-            return;
+let statusClass="status-new";
 
-        }
+if(order.status==="مقبول")
+statusClass="status-accepted";
 
+if(order.status==="قيد التوصيل")
+statusClass="status-delivery";
 
-        currentProducts.forEach(function(product) {
+if(order.status==="مكتمل")
+statusClass="status-done";
 
-            const element =
-                document.createElement("div");
+if(order.status==="مرفوض")
+statusClass="status-rejected";
 
-            element.className = "food-item";
 
+let itemsHTML="";
 
-            element.innerHTML = `
+(order.items||[]).forEach(item=>{
 
-                <img
-                    class="food-image"
-                    src="${product.image || "https://images.unsplash.com/photo-1568901346375-23c9450c58df?auto=format&fit=crop&w=300&q=80"}"
-                    alt="${product.name || "منتج"}"
-                >
+itemsHTML+=
+`${item.name} × 1
+<br>
+<span style="color:#777">
+${Number(item.price||0).toLocaleString()} د.ع
+</span>
+`;
 
-                <div class="food-info">
+});
 
-                    <div class="food-name">
-                        ${product.name || "منتج"}
-                    </div>
 
-                    <div class="food-description">
-                        ${product.description || ""}
-                    </div>
+element.innerHTML=`
 
-                    <div class="food-price">
-                        ${Number(product.price || 0).toLocaleString()}
-                        د.ع
-                    </div>
+<div class="admin-order-head">
 
-                </div>
+<div class="admin-order-number">
+طلب #${order.orderNumber||"-"}
+</div>
 
-                <button class="add-button">
-                    +
-                </button>
+<div class="status-badge ${statusClass}">
+${order.status||"جديد"}
+</div>
 
-            `;
+</div>
 
 
-            element
-                .querySelector(".add-button")
-                .addEventListener(
-                    "click",
-                    function() {
+<div class="order-row">
+<b>الزبون:</b>
+${escapeHTML(order.customerName||"-")}
+</div>
 
-                        addToCart(
-                            product.name,
-                            Number(product.price || 0)
-                        );
 
-                    }
-                );
+<div class="order-row">
+<b>الهاتف:</b>
+${escapeHTML(order.customerPhone||"-")}
+</div>
 
 
-            container.appendChild(element);
+<div class="order-row">
+<b>المحل:</b>
+${escapeHTML(order.shopName||"-")}
+</div>
 
-        });
 
-    }
+<div class="order-row">
+<b>العنوان:</b>
+${escapeHTML(order.customerAddress||"-")}
+</div>
 
 
-    function addToCart(name, price) {
+<div class="order-row">
+<b>ملاحظات:</b>
+${escapeHTML(order.customerNotes||"لا توجد")}
+</div>
 
-        cart.push({
-            name: name,
-            price: price
-        });
 
-        updateCart();
+<div class="order-items">
+<b>الطلبات:</b>
+<br>
+${itemsHTML||"لا توجد منتجات"}
+<br>
+<b>
+المجموع:
+${Number(order.total||0).toLocaleString()} د.ع
+</b>
+</div>
 
-    }
 
+${
+order.latitude && order.longitude
+?
+`
+<button
+class="secondary-button blue-button admin-full"
+onclick="openOrderLocation(${order.latitude},${order.longitude})"
+>
+فتح موقع الزبون
+</button>
+`
+:""
+}
 
-    function updateCart() {
 
-        document.getElementById("cartCount")
-            .textContent =
-            cart.length;
+<div class="admin-actions">
 
+<button
+class="green-button"
+onclick="changeOrderStatus('${order.id}','مقبول')"
+>
+قبول الطلب
+</button>
 
-        document.getElementById("bottomCart")
-            .style.display =
-            cart.length > 0
-                ? "flex"
-                : "none";
+<button
+class="red-button"
+onclick="changeOrderStatus('${order.id}','مرفوض')"
+>
+رفض الطلب
+</button>
 
-    }
+<button
+class="blue-button"
+onclick="changeOrderStatus('${order.id}','قيد التوصيل')"
+>
+قيد التوصيل
+</button>
 
+<button
+onclick="changeOrderStatus('${order.id}','مكتمل')"
+>
+مكتمل
+</button>
 
-    function openCart() {
+<button
+class="whatsapp-button admin-full"
+onclick="whatsappCustomer('${escapeAttr(order.customerPhone||"")}')"
+>
+واتساب الزبون
+</button>
 
-        if (cart.length === 0) {
+<button
+class="admin-full"
+onclick="callCustomer('${escapeAttr(order.customerPhone||"")}')"
+>
+اتصال بالزبون
+</button>
 
-            alert("السلة فارغة");
+</div>
 
-            return;
+`;
 
-        }
 
+container.appendChild(element);
 
-        hideAllPages();
+});
 
-        document.getElementById("cartPage")
-            .style.display = "block";
 
+}catch(error){
 
-        renderCart();
+console.error(error);
 
-    }
+container.innerHTML=
+'<div class="error">تعذر تحميل الطلبات. تأكد من قواعد Firestore.</div>';
 
+}
 
-    window.openCart = openCart;
+}
 
 
-    function goRestaurant() {
+window.loadAdminOrders=loadAdminOrders;
 
-        hideAllPages();
 
-        document.getElementById("restaurantPage")
-            .style.display = "block";
+async function changeOrderStatus(id,status){
 
-    }
+try{
 
+await updateDoc(
+doc(db,"orders",id),
+{
+status:status,
+updatedAt:serverTimestamp()
+}
+);
 
-    window.goRestaurant = goRestaurant;
+await loadAdminOrders();
 
+}catch(error){
 
-    function renderCart() {
+console.error(error);
 
-        const container =
-            document.getElementById("cartItems");
+alert("تعذر تحديث حالة الطلب.");
 
+}
 
-        container.innerHTML = "";
+}
 
-        let total = 0;
 
+window.changeOrderStatus=changeOrderStatus;
 
-        cart.forEach(function(item, index) {
 
-            total += item.price;
+function openOrderLocation(lat,lng){
 
+window.open(
+`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`,
+"_blank"
+);
 
-            const element =
-                document.createElement("div");
+}
 
-            element.className = "cart-item";
+window.openOrderLocation=openOrderLocation;
 
 
-            element.innerHTML = `
+/* =========================
+   المحلات
+========================= */
 
-                <div>
+async function loadShops(){
 
-                    <div class="cart-item-name">
-                        ${item.name}
-                    </div>
+const c=
+document.getElementById("shopsContainer");
 
-                    <div class="cart-item-price">
-                        ${item.price.toLocaleString()} د.ع
-                    </div>
+try{
 
-                </div>
+const s=
+await getDocs(
+collection(db,"shops")
+);
 
-                <button class="remove-button">
-                    حذف
-                </button>
-            `;
+c.innerHTML="";
 
+if(s.empty){
 
-            element
-                .querySelector(".remove-button")
-                .addEventListener(
-                    "click",
-                    function() {
+c.className="loading";
 
-                        cart.splice(index, 1);
+c.textContent=
+"لا توجد محلات حاليًا.";
 
-                        updateCart();
+return;
 
-                        renderCart();
+}
 
-                    }
-                );
 
+s.forEach(x=>{
 
-            container.appendChild(element);
+const shop=x.data();
 
-        });
+const id=x.id;
 
+const e=
+document.createElement("div");
 
-        document.getElementById("totalPrice")
-            .textContent =
-            total.toLocaleString();
+e.className="shop";
 
-    }
 
+e.innerHTML=`
 
-    function openCheckout() {
+<img
+class="shop-image"
+src="${shop.image||"https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=900&q=80"}"
+>
 
-        if (cart.length === 0) {
+<div class="shop-name">
+${escapeHTML(shop.name||"محل")}
+</div>
 
-            alert("السلة فارغة");
+<div class="shop-info">
+${escapeHTML(shop.description||"توصيل داخل تلكيف")}
+</div>
 
-            return;
+<button class="open-button">
+عرض القائمة
+</button>
 
-        }
+`;
 
 
-        hideAllPages();
+e.querySelector("button")
+.onclick=
+()=>openRestaurant(id,shop);
 
-        document.getElementById("checkoutPage")
-            .style.display = "block";
 
+c.appendChild(e);
 
-        let total = 0;
+});
 
 
-        cart.forEach(function(item) {
+}catch(e){
 
-            total += item.price;
+console.error(e);
 
-        });
+c.className="error";
 
+c.textContent=
+"تعذر تحميل المحلات.";
 
-        document.getElementById("checkoutTotal")
-            .textContent =
-            total.toLocaleString();
+}
 
-    }
+}
 
 
-    window.openCheckout = openCheckout;
+/* =========================
+   المطعم
+========================= */
 
+async function openRestaurant(id,shop){
 
-    async function confirmOrder() {
+currentShop={
+id,
+...shop
+};
 
-        const name =
-            document.getElementById("customerName")
-                .value.trim();
+show("restaurantPage");
 
 
-        const phone =
-            document.getElementById("customerPhone")
-                .value.trim();
+document.getElementById("restaurantTitle")
+.textContent=
+shop.name||"محل";
 
 
-        const address =
-            document.getElementById("customerAddress")
-                .value.trim();
+document.getElementById("restaurantDescription")
+.textContent=
+shop.description||"توصيل داخل تلكيف";
 
 
-        const notes =
-            document.getElementById("customerNotes")
-                .value.trim();
+document.getElementById("restaurantCover")
+.src=
+shop.image||
+"https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=900&q=80";
 
 
-        if (!name) {
+await loadProducts(id);
 
-            alert("اكتب اسمك أولاً");
+}
 
-            return;
+window.openRestaurant=openRestaurant;
 
-        }
 
+async function loadProducts(shopId){
 
-        if (!phone) {
+const c=
+document.getElementById("productsContainer");
 
-            alert("اكتب رقم الهاتف");
+c.className="loading";
 
-            return;
+c.textContent=
+"جاري تحميل المنتجات...";
 
-        }
 
+try{
 
-        if (!address) {
+const s=
+await getDocs(
+collection(db,"products")
+);
 
-            alert("اكتب عنوان التوصيل");
+currentProducts=[];
 
-            return;
 
-        }
+s.forEach(x=>{
 
+const p=x.data();
 
-        let total = 0;
+if(p.shopId===shopId){
 
+currentProducts.push({
+id:x.id,
+...p
+});
 
-        cart.forEach(function(item) {
+}
 
-            total += item.price;
+});
 
-        });
 
+renderProducts();
 
-        const newOrderNumber =
-            orderNumber;
 
+}catch(e){
 
-        try {
+console.error(e);
 
-            await addDoc(
-                collection(db, "orders"),
-                {
+c.className="error";
 
-                    orderNumber:
-                        newOrderNumber,
+c.textContent=
+"تعذر تحميل المنتجات.";
 
-                    customerName:
-                        name,
+}
 
-                    customerPhone:
-                        phone,
+}
 
-                    customerAddress:
-                        address,
 
-                    customerNotes:
-                        notes,
+function renderProducts(){
 
-                    items:
-                        cart,
+const c=
+document.getElementById("productsContainer");
 
-                    total:
-                        total,
+c.innerHTML="";
 
-                    shopId:
-                        currentShop
-                            ? currentShop.id
-                            : "",
+c.className="";
 
-                    shopName:
-                        currentShop
-                            ? currentShop.name
-                            : "",
 
-                    status:
-                        "جديد",
+if(!currentProducts.length){
 
-                    createdAt:
-                        serverTimestamp()
+c.className="loading";
 
-                }
-            );
+c.textContent=
+"لا توجد منتجات حاليًا.";
 
+return;
 
-            orderNumber++;
+}
 
-            localStorage.setItem(
-                "talkaifOrderNumber",
-                orderNumber
-            );
 
+currentProducts.forEach(p=>{
 
-            document.getElementById("orderNumber")
-                .textContent =
-                "#" + newOrderNumber;
+const e=
+document.createElement("div");
 
+e.className="food-item";
 
-            cart = [];
 
-            updateCart();
+e.innerHTML=`
 
-            hideAllPages();
+<img
+class="food-image"
+src="${p.image||"https://images.unsplash.com/photo-1568901346375-23c9450c58df?auto=format&fit=crop&w=300&q=80"}"
+>
 
-            document.getElementById("successPage")
-                .style.display = "block";
+<div class="food-info">
 
+<div class="food-name">
+${escapeHTML(p.name||"منتج")}
+</div>
 
-            document.getElementById("customerName")
-                .value = "";
+<div class="food-description">
+${escapeHTML(p.description||"")}
+</div>
 
-            document.getElementById("customerPhone")
-                .value = "";
+<div class="food-price">
+${Number(p.price||0).toLocaleString()}
+د.ع
+</div>
 
-            document.getElementById("customerAddress")
-                .value = "";
+</div>
 
-            document.getElementById("customerNotes")
-                .value = "";
+<button class="add-button">
++
+</button>
 
+`;
 
-        } catch (error) {
 
-            console.error(error);
+e.querySelector("button")
+.onclick=
+()=>addToCart(
+p.name,
+Number(p.price||0)
+);
 
-            alert(
-                "تعذر إرسال الطلب. تأكد من اتصال الإنترنت."
-            );
 
-        }
+c.appendChild(e);
 
-    }
+});
 
+}
 
-    window.confirmOrder = confirmOrder;
 
+/* =========================
+   السلة
+========================= */
 
-    document.getElementById("searchInput")
-        .addEventListener(
-            "input",
-            function() {
+function addToCart(name,price){
 
-                const search =
-                    this.value
-                        .trim()
-                        .toLowerCase();
+cart.push({
+name,
+price
+});
 
+updateCart();
 
-                const shops =
-                    document.querySelectorAll(".shop");
+}
 
 
-                shops.forEach(function(shop) {
+function updateCart(){
 
-                    const text =
-                        shop.textContent
-                            .toLowerCase();
+document.getElementById("cartCount")
+.textContent=cart.length;
 
+document.getElementById("bottomCart")
+.style.display=
+cart.length?"flex":"none";
 
-                    shop.style.display =
-                        text.includes(search)
-                            ? "block"
-                            : "none";
+}
 
-                });
 
-            }
-        );
+function openCart(){
 
+if(!cart.length){
 
-    loadShops();
+alert("السلة فارغة.");
+
+return;
+
+}
+
+show("cartPage");
+
+renderCart();
+
+}
+
+window.openCart=openCart;
+
+
+function goRestaurant(){
+
+show("restaurantPage");
+
+}
+
+window.goRestaurant=goRestaurant;
+
+
+function renderCart(){
+
+const c=
+document.getElementById("cartItems");
+
+c.innerHTML="";
+
+let total=0;
+
+
+cart.forEach((i,n)=>{
+
+total+=i.price;
+
+
+const e=
+document.createElement("div");
+
+e.className="cart-item";
+
+
+e.innerHTML=`
+
+<div>
+
+<div class="cart-item-name">
+${escapeHTML(i.name)}
+</div>
+
+<div class="cart-item-price">
+${i.price.toLocaleString()} د.ع
+</div>
+
+</div>
+
+<button class="remove-button">
+حذف
+</button>
+
+`;
+
+
+e.querySelector("button")
+.onclick=()=>{
+
+cart.splice(n,1);
+
+updateCart();
+
+renderCart();
+
+};
+
+
+c.appendChild(e);
+
+});
+
+
+document.getElementById("totalPrice")
+.textContent=
+total.toLocaleString();
+
+}
+
+
+function openCheckout(){
+
+if(!cart.length){
+
+alert("السلة فارغة.");
+
+return;
+
+}
+
+show("checkoutPage");
+
+
+const total=
+cart.reduce(
+(a,b)=>a+b.price,
+0
+);
+
+
+document.getElementById("checkoutTotal")
+.textContent=
+total.toLocaleString();
+
+}
+
+window.openCheckout=openCheckout;
+
+
+/* =========================
+   GPS
+========================= */
+
+async function useCurrentLocation(){
+
+const text=
+document.getElementById("locationText");
+
+
+if(!window.isSecureContext){
+
+text.innerHTML=
+"تحديد الموقع يحتاج تشغيل الموقع من HTTPS. إذا فتحت الملف مباشرة من الهاتف، ارفعه على Firebase Hosting أولاً.";
+
+text.style.color="#a00";
+
+return;
+
+}
+
+
+if(!navigator.geolocation){
+
+alert("هذا المتصفح لا يدعم تحديد الموقع.");
+
+return;
+
+}
+
+
+text.textContent=
+"جاري تحديد موقعك...";
+
+
+try{
+
+if(navigator.permissions){
+
+try{
+
+const permission=
+await navigator.permissions.query({
+name:"geolocation"
+});
+
+if(permission.state==="denied"){
+
+text.innerHTML=
+"المتصفح يمنع الوصول للموقع. افتح إعدادات صلاحيات الموقع للمتصفح نفسه، وليس صلاحيات التطبيق فقط.";
+
+text.style.color="#a00";
+
+return;
+
+}
+
+}catch(e){}
+
+}
+
+
+navigator.geolocation.getCurrentPosition(
+
+position=>{
+
+selectedLat=
+position.coords.latitude;
+
+selectedLng=
+position.coords.longitude;
+
+
+text.innerHTML=
+`
+<span class="location-success">
+✓ تم تحديد موقعك بنجاح
+</span>
+<br>
+الإحداثيات:
+${selectedLat.toFixed(6)},
+${selectedLng.toFixed(6)}
+`;
+
+
+document.getElementById("customerAddress")
+.value=
+`موقع GPS: ${selectedLat.toFixed(6)}, ${selectedLng.toFixed(6)}`;
+
+},
+
+error=>{
+
+console.error(error);
+
+let message=
+"تعذر تحديد موقعك.";
+
+if(error.code===1)
+message=
+"صلاحية الموقع مرفوضة من المتصفح.";
+
+if(error.code===2)
+message=
+"تعذر العثور على موقع GPS. تأكد من تشغيل الموقع.";
+
+if(error.code===3)
+message=
+"انتهى وقت محاولة تحديد الموقع. حاول مرة ثانية.";
+
+text.innerHTML=
+message+
+"<br>يمكنك كتابة العنوان يدويًا.";
+
+text.style.color="#a00";
+
+},
+
+{
+enableHighAccuracy:true,
+timeout:15000,
+maximumAge:0
+
+}
+
+);
+
+}
+
+
+window.useCurrentLocation=useCurrentLocation;
+
+
+function openGoogleMaps(){
+
+if(selectedLat!==null && selectedLng!==null){
+
+window.open(
+`https://www.google.com/maps/search/?api=1&query=${selectedLat},${selectedLng}`,
+"_blank"
+);
+
+return;
+
+}
+
+
+const address=
+document.getElementById("customerAddress")
+.value.trim();
+
+
+if(address){
+
+window.open(
+"https://www.google.com/maps/search/?api=1&query="+
+encodeURIComponent(address+" Talkaif Iraq"),
+"_blank"
+);
+
+return;
+
+}
+
+
+alert("حدد موقعك أولاً أو اكتب عنوانك.");
+
+}
+
+
+window.openGoogleMaps=openGoogleMaps;
+
+
+/* =========================
+   إرسال الطلب
+========================= */
+
+async function confirmOrder(){
+
+const name=
+document.getElementById("customerName")
+.value.trim();
+
+const phone=
+document.getElementById("customerPhone")
+.value.trim();
+
+const address=
+document.getElementById("customerAddress")
+.value.trim();
+
+const notes=
+document.getElementById("customerNotes")
+.value.trim();
+
+
+/*
+   كل الحقول المطلوبة لازم تكون ممتلئة
+*/
+
+if(!name){
+
+alert("اكتب اسمك أولاً.");
+
+return;
+
+}
+
+if(!phone){
+
+alert("اكتب رقم الهاتف.");
+
+return;
+
+}
+
+if(!address){
+
+alert("اكتب عنوان التوصيل أو حدد موقعك.");
+
+return;
+
+}
+
+if(!currentShop){
+
+alert("لم يتم تحديد المحل.");
+
+return;
+
+}
+
+if(!cart.length){
+
+alert("السلة فارغة.");
+
+return;
+
+}
+
+
+const total=
+cart.reduce(
+(a,b)=>a+b.price,
+0
+);
+
+
+const num=orderNumber;
+
+
+try{
+
+const ref=
+await addDoc(
+collection(db,"orders"),
+{
+
+orderNumber:num,
+
+customerName:name,
+
+customerPhone:phone,
+
+customerAddress:address,
+
+customerNotes:notes,
+
+latitude:selectedLat,
+
+longitude:selectedLng,
+
+items:cart,
+
+total:total,
+
+shopId:currentShop.id,
+
+shopName:currentShop.name||"",
+
+status:"جديد",
+
+driverName:"",
+
+driverPhone:"",
+
+createdAt:serverTimestamp()
+
+}
+);
+
+
+currentOrderId=
+ref.id;
+
+
+localStorage.setItem(
+"talkaifLastOrderId",
+ref.id
+);
+
+
+orderNumber++;
+
+
+localStorage.setItem(
+"talkaifOrderNumber",
+orderNumber
+);
+
+
+document.getElementById("orderNumber")
+.textContent="#"+num;
+
+
+cart=[];
+
+updateCart();
+
+selectedLat=null;
+
+selectedLng=null;
+
+
+document.getElementById("customerName")
+.value="";
+
+document.getElementById("customerPhone")
+.value="";
+
+document.getElementById("customerAddress")
+.value="";
+
+document.getElementById("customerNotes")
+.value="";
+
+
+show("successPage");
+
+
+}catch(e){
+
+console.error(e);
+
+alert(
+"تعذر إرسال الطلب. تأكد من الإنترنت وقواعد Firestore."
+);
+
+}
+
+}
+
+window.confirmOrder=confirmOrder;
+
+
+/* =========================
+   حساب المستخدم
+========================= */
+
+function pseudoEmail(phone){
+
+return phone.replace(/\D/g,"")+"@talkaif.local";
+
+}
+
+
+function openAccount(){
+
+if(auth.currentUser){
+
+show("accountPage");
+
+document.getElementById("accountPhone")
+.textContent=
+auth.currentUser.email
+.replace("@talkaif.local","");
+
+}else{
+
+show("loginPage");
+
+}
+
+}
+
+window.openAccount=openAccount;
+
+
+async function registerAccount(){
+
+const p=
+document.getElementById("loginPhone")
+.value.trim();
+
+const pw=
+document.getElementById("loginPassword")
+.value;
+
+const cp=
+document.getElementById("confirmPassword")
+.value;
+
+
+if(!p||!pw||!cp){
+
+alert("املأ جميع الحقول.");
+
+return;
+
+}
+
+if(pw!==cp){
+
+alert("كلمتا السر غير متطابقتين.");
+
+return;
+
+}
+
+if(pw.length<6){
+
+alert("كلمة السر يجب أن تكون 6 أحرف على الأقل.");
+
+return;
+
+}
+
+
+try{
+
+await createUserWithEmailAndPassword(
+auth,
+pseudoEmail(p),
+pw
+);
+
+alert("تم إنشاء الحساب.");
+
+openAccount();
+
+
+}catch(e){
+
+console.error(e);
+
+alert("تعذر إنشاء الحساب.");
+
+}
+
+}
+
+
+window.registerAccount=registerAccount;
+
+
+async function loginAccount(){
+
+const p=
+document.getElementById("loginPhone")
+.value.trim();
+
+const pw=
+document.getElementById("loginPassword")
+.value;
+
+
+if(!p||!pw){
+
+alert("اكتب رقم الهاتف وكلمة السر.");
+
+return;
+
+}
+
+
+try{
+
+await signInWithEmailAndPassword(
+auth,
+pseudoEmail(p),
+pw
+);
+
+openAccount();
+
+
+}catch(e){
+
+alert(
+"رقم الهاتف أو كلمة السر غير صحيحة."
+);
+
+}
+
+}
+
+
+window.loginAccount=loginAccount;
+
+
+async function logoutAccount(){
+
+await signOut(auth);
+
+goHome();
+
+}
+
+
+window.logoutAccount=logoutAccount;
+
+
+/* =========================
+   آخر طلب
+========================= */
+
+async function showLastOrder(){
+
+if(!currentOrderId){
+
+alert("لا يوجد طلب محفوظ على هذا الجهاز.");
+
+return;
+
+}
+
+
+try{
+
+const snapshot=
+await getDoc(
+doc(db,"orders",currentOrderId)
+);
+
+
+if(!snapshot.exists()){
+
+alert("الطلب غير موجود.");
+
+return;
+
+}
+
+
+const order=
+snapshot.data();
+
+
+document.getElementById("orderNumber")
+.textContent=
+"#"+order.orderNumber;
+
+
+show("successPage");
+
+
+if(order.driverPhone){
+
+document.getElementById("driverInfo")
+.style.display="block";
+
+document.getElementById("driverName")
+.textContent=
+"المندوب: "+
+(order.driverName||"المندوب");
+
+document.getElementById("driverPhone")
+.textContent=
+"رقم المندوب: "+
+order.driverPhone;
+
+}else{
+
+document.getElementById("driverInfo")
+.style.display="none";
+
+}
+
+
+}catch(e){
+
+console.error(e);
+
+alert("تعذر تحميل الطلب.");
+
+}
+
+}
+
+
+window.showLastOrder=showLastOrder;
+
+
+/* =========================
+   التواصل
+========================= */
+
+function cleanPhone(phone){
+
+return String(phone||"")
+.replace(/\D/g,"");
+
+}
+
+
+function contactDriver(){
+
+const phone=
+cleanPhone(DRIVER_PHONE);
+
+
+window.location.href=
+"https://wa.me/964"+
+phone.replace(/^0/,"")+
+"?text="+
+encodeURIComponent(
+"مرحباً، أريد التواصل بخصوص Talkaif Go."
+);
+
+}
+
+
+window.contactDriver=contactDriver;
+
+
+function callDriver(){
+
+window.location.href=
+"tel:"+DRIVER_PHONE;
+
+}
+
+
+window.callDriver=callDriver;
+
+
+function whatsappCustomer(phone){
+
+const p=
+cleanPhone(phone);
+
+
+if(!p){
+
+alert("رقم الزبون غير موجود.");
+
+return;
+
+}
+
+
+window.location.href=
+"https://wa.me/964"+
+p.replace(/^0/,"");
+
+}
+
+
+window.whatsappCustomer=whatsappCustomer;
+
+
+function callCustomer(phone){
+
+const p=
+cleanPhone(phone);
+
+
+if(!p){
+
+alert("رقم الزبون غير موجود.");
+
+return;
+
+}
+
+
+window.location.href=
+"tel:"+p;
+
+}
+
+
+window.callCustomer=callCustomer;
+
+
+/* =========================
+   أدوات حماية HTML
+========================= */
+
+function escapeHTML(value){
+
+return String(value)
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
+
+}
+
+
+function escapeAttr(value){
+
+return String(value)
+.replace(/\\/g,"\\\\")
+.replace(/'/g,"\\'");
+
+}
+
+
+/* =========================
+   البحث
+========================= */
+
+document
+.getElementById("searchInput")
+.addEventListener(
+"input",
+function(){
+
+const q=
+this.value
+.trim()
+.toLowerCase();
+
+
+document
+.querySelectorAll(".shop")
+.forEach(s=>{
+
+s.style.display=
+s.textContent
+.toLowerCase()
+.includes(q)
+?"block"
+:"none";
+
+});
+
+}
+);
+
+
+/* =========================
+   تشغيل
+========================= */
+
+onAuthStateChanged(
+auth,
+user=>{
+
+}
+);
+
+
+loadShops();
 
 </script>
 
