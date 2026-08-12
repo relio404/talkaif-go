@@ -14,12 +14,17 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Install Capacitor
         run: |
           npm init -y
           npm install @capacitor/core @capacitor/cli @capacitor/android
+
+      - name: Prepare web files
+        run: |
+          mkdir -p www
+          cp index.html www/index.html
 
       - name: Create Capacitor project
         run: |
@@ -27,7 +32,7 @@ jobs:
           {
             "appId": "com.talkaif.go",
             "appName": "Talkaif Go",
-            "webDir": ".",
+            "webDir": "www",
             "server": {
               "androidScheme": "https"
             }
